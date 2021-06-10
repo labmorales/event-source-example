@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>Server Testing</title>
+    </head>
+
+    <body>
+        <h1>Testing Event Source</h1>
+        <button id="start">Start Source Event</button>
+        <button id="stop">Stop Source Event</button>
+        <pre id="console"></pre>
+        <script>
+            let eventSource;
+
+            function startSourceEvent(e){
+                console.log('Start Source Event');
+                // Declare an EventSource
+                eventSource = new EventSource('http://localhost:5000/updates');
+                // Handler for events without an event type specified
+                eventSource.onmessage = (e) => {
+                    // Do something - event data etc will be in e.data
+                    console.log(e);                    
+                };
+
+                // Handler for events of type 'eventType' only 
+                eventSource.addEventListener('myEvent', (e) => {
+                    console.log(e);
+                    // Do something - event data will be in e.data,
+                    // message will be of type 'eventType'
+                    let panel = document.querySelector("#console");
+                    panel.innerHTML = e.data;
+                });
+            }
+
+            function closesConnection(){
+                console.log('Closed Source Event');
+                eventSource.close();
+            }
+
+            function init(){        
+                document.querySelector('#start').addEventListener('click', startSourceEvent, false);
+                document.querySelector('#stop').addEventListener('click', closesConnection, false);
+            }
+
+            init();
+        </script>
+    </body>
+
+</html>
